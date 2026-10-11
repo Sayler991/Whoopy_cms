@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0d0a09">
+<title>Tableau de bord — Whoopy Burger</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div id="app" hidden></div>
+<div id="login" hidden>
+  <form class="login-card" id="login-form" autocomplete="on">
+    <img class="login-logo" src="/assets/logo.svg" alt="Whoopy Burger" width="220" height="70">
+    <h1>Tableau de bord</h1>
+    <p class="mut">Entrez le mot de passe pour modifier votre site.</p>
+    <label class="f"><span>Mot de passe</span>
+      <input id="login-pw" type="password" autocomplete="current-password" required autofocus></label>
+    <p class="login-err" id="login-err" role="alert" hidden></p>
+    <button class="btn btn-solid" type="submit">Se connecter</button>
+  </form>
+</div>
+<div id="boot" class="boot">Chargement…</div>
+<div id="toasts" aria-live="polite"></div>
+<noscript><p style="padding:2rem">Le tableau de bord a besoin de JavaScript.</p></noscript>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# À copier à la RACINE du dépôt Git (à côté de server.py et content.json).
+# Netlify : à chaque modification du contenu (via Decap CMS ou Git), le site est régénéré.
+[build]
+  # 1) copie l'interface Decap dans site/admin/   2) régénère site/index.html depuis content.json
+  command = "mkdir -p site/admin site/assets/img/uploads && cp extras/netlify/decap/index.html extras/netlify/decap/config.yml site/admin/ && python3 render.py"
+  publish = "site"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"

@@ -1,0 +1,581 @@
+# Configuration Decap CMS pour Whoopy Burger (voir README, section « Mise en ligne »).
+# Généré par tools/make_decap_config.py — à adapter à votre dépôt.
+backend:
+  name: "git-gateway"
+  branch: "main"
+locale: "fr"
+media_folder: "site/assets/img/uploads"
+public_folder: "/assets/img/uploads"
+site_url: "https://VOTRE-SITE.netlify.app"
+display_url: "https://VOTRE-SITE.netlify.app"
+collections:
+  - name: "contenu"
+    label: "Contenu du site"
+    files:
+      - name: "content"
+        label: "Whoopy Burger — tout le site"
+        file: "content.json"
+        format: "json"
+        fields:
+          - name: "site"
+            label: "Référencement Google & partage"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "url"
+                label: "Adresse publique du site"
+                widget: "string"
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+              - name: "description"
+                label: "Description"
+                widget: "text"
+              - name: "og_title"
+                label: "Titre de partage"
+                widget: "string"
+              - name: "og_description"
+                label: "Description de partage"
+                widget: "text"
+              - name: "twitter_description"
+                label: "Description Twitter/X"
+                widget: "text"
+              - name: "schema_description"
+                label: "Description longue"
+                widget: "text"
+              - name: "timezone"
+                label: "Fuseau horaire"
+                widget: "string"
+          - name: "contact"
+            label: "Contact & adresse"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "phone_display"
+                label: "Téléphone affiché"
+                widget: "string"
+              - name: "phone_intl"
+                label: "Téléphone (format +213…)"
+                widget: "string"
+              - name: "address"
+                label: "Adresse affichée"
+                widget: "text"
+              - name: "street"
+                label: "Quartier / rue"
+                widget: "string"
+              - name: "city"
+                label: "Ville"
+                widget: "string"
+              - name: "postal_code"
+                label: "Code postal"
+                widget: "string"
+                required: false
+              - name: "country"
+                label: "Pays (code)"
+                widget: "string"
+              - name: "instagram_url"
+                label: "Lien Instagram"
+                widget: "string"
+              - name: "instagram_handle"
+                label: "Nom Instagram"
+                widget: "string"
+              - name: "maps_url"
+                label: "Lien Google Maps"
+                widget: "string"
+              - name: "place_id"
+                label: "Identifiant Google du lieu"
+                widget: "string"
+                required: false
+              - name: "lat"
+                label: "Latitude"
+                widget: "number"
+                value_type: "float"
+              - name: "lon"
+                label: "Longitude"
+                widget: "number"
+                value_type: "float"
+          - name: "rating"
+            label: "Note Google"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "value"
+                label: "Note (ex. 5,0)"
+                widget: "string"
+              - name: "count"
+                label: "Nombre d’avis"
+                widget: "number"
+                value_type: "int"
+          - name: "hero"
+            label: "Accueil"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "kicker"
+                label: "Sur-titre"
+                widget: "string"
+              - name: "lead"
+                label: "Phrase d’accroche"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "bubble"
+                label: "Bulle de la mascotte"
+                widget: "text"
+              - name: "badge_text"
+                label: "Texte du badge rond"
+                widget: "string"
+                required: false
+              - name: "marquee"
+                label: "Bandeau défilant"
+                widget: "list"
+                collapsed: true
+                field:
+                  name: "mot"
+                  label: "Mot"
+                  widget: "string"
+          - name: "about"
+            label: "La maison"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "big"
+                label: "Introduction"
+                widget: "text"
+              - name: "text"
+                label: "Paragraphe"
+                widget: "text"
+                required: false
+              - name: "quote"
+                label: "Citation"
+                widget: "text"
+                required: false
+              - name: "quote_cite"
+                label: "Source de la citation"
+                widget: "string"
+                required: false
+              - name: "facts"
+                label: "Mots-clés"
+                widget: "list"
+                collapsed: true
+                field:
+                  name: "mot"
+                  label: "Mot"
+                  widget: "string"
+          - name: "services"
+            label: "Services"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "lead"
+                label: "Introduction"
+                widget: "text"
+                required: false
+              - name: "items"
+                label: "Services"
+                widget: "list"
+                collapsed: true
+                fields:
+                  - name: "title"
+                    label: "Titre"
+                    widget: "string"
+                  - name: "icon"
+                    label: "Icône"
+                    widget: "select"
+                    options:
+                      - "burger"
+                      - "fries"
+                      - "seat"
+                      - "moto"
+                  - name: "text"
+                    label: "Texte"
+                    widget: "text"
+                    required: false
+                  - name: "quote"
+                    label: "Citation (facultatif)"
+                    widget: "string"
+                    required: false
+                  - name: "quote_cite"
+                    label: "Source"
+                    widget: "string"
+                    required: false
+          - name: "band"
+            label: "Bandeau photo"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "sub"
+                label: "Sous-titre"
+                widget: "string"
+                required: false
+          - name: "menu"
+            label: "La carte"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "lead"
+                label: "Introduction"
+                widget: "text"
+                required: false
+              - name: "burgers"
+                label: "Burgers"
+                widget: "list"
+                collapsed: true
+                fields:
+                  - name: "name"
+                    label: "Nom"
+                    widget: "string"
+                  - name: "desc"
+                    label: "Description"
+                    widget: "text"
+                    required: false
+                  - name: "price"
+                    label: "Prix (DA)"
+                    widget: "number"
+                    value_type: "int"
+                    min: 0
+                  - name: "tag"
+                    label: "Étiquette"
+                    widget: "string"
+                    required: false
+                  - name: "color"
+                    label: "Couleur"
+                    widget: "select"
+                    options:
+                      - "rose"
+                      - "jaune"
+                      - "bleu"
+                  - name: "hot"
+                    label: "🔥 Mis en avant"
+                    widget: "boolean"
+                    default: false
+                    required: false
+              - name: "supplements"
+                label: "Suppléments"
+                widget: "list"
+                collapsed: true
+                fields:
+                  - name: "name"
+                    label: "Nom"
+                    widget: "string"
+                  - name: "price"
+                    label: "Prix (DA)"
+                    widget: "number"
+                    value_type: "int"
+                    min: 0
+                  - name: "desc"
+                    label: "Phrase (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "included_title"
+                label: "Encadré — début en gras"
+                widget: "string"
+                required: false
+              - name: "included_text"
+                label: "Encadré — suite"
+                widget: "string"
+                required: false
+              - name: "note"
+                label: "Note de bas de carte"
+                widget: "text"
+                required: false
+          - name: "gallery"
+            label: "Ambiance"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+          - name: "reviews"
+            label: "Avis"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "note"
+                label: "Note sous les avis"
+                widget: "string"
+                required: false
+              - name: "items"
+                label: "Avis"
+                widget: "list"
+                collapsed: true
+                fields:
+                  - name: "author"
+                    label: "Auteur"
+                    widget: "string"
+                  - name: "stars"
+                    label: "Étoiles"
+                    widget: "number"
+                    value_type: "int"
+                    min: 1
+                    max: 5
+                  - name: "source"
+                    label: "Source"
+                    widget: "string"
+                    required: false
+                  - name: "text"
+                    label: "Texte"
+                    widget: "text"
+          - name: "hours"
+            label: "Horaires"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "title"
+                label: "Titre"
+                widget: "string"
+                hint: "Entourez un mot de *étoiles* pour le mettre en jaune. {tel} = téléphone."
+              - name: "note"
+                label: "Note"
+                widget: "string"
+                required: false
+              - name: "days"
+                label: "Jours (7, dans l’ordre lundi → dimanche)"
+                widget: "list"
+                collapsed: true
+                min: 7
+                max: 7
+                fields:
+                  - name: "day"
+                    label: "Jour"
+                    widget: "string"
+                  - name: "ranges"
+                    label: "Plages d’ouverture (aucune = fermé)"
+                    widget: "list"
+                    collapsed: true
+                    max: 2
+                    fields:
+                      - name: "open"
+                        label: "Ouverture (HH:MM)"
+                        widget: "string"
+                        pattern:
+                          - "^([01]?\\d|2[0-3]):[0-5]\\d$"
+                          - "Format 11:30"
+                      - name: "close"
+                        label: "Fermeture (HH:MM, 00:00 = minuit)"
+                        widget: "string"
+                        pattern:
+                          - "^([01]?\\d|2[0-3]):[0-5]\\d$"
+                          - "Format 00:00"
+          - name: "footer"
+            label: "Pied de page"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "tagline"
+                label: "Phrase sous le logo"
+                widget: "string"
+                required: false
+          - name: "photos"
+            label: "Photos"
+            widget: "object"
+            collapsed: true
+            fields:
+              - name: "about_1"
+                label: "La maison — grande photo en arche"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "about_2"
+                label: "La maison — petite photo en bas"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "gal_3"
+                label: "Ambiance — rangée du bas, 1re photo"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "menu_2"
+                label: "La carte — photo « Poulet pané »"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "menu_3"
+                label: "La carte — photo « Pain brioché »"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "menu_1"
+                label: "La carte — grande photo « Burger & frites »"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "gal_1"
+                label: "Ambiance — grande photo (fresque)"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "gal_2"
+                label: "Ambiance — photo verticale (rouge & blanc)"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "gal_4"
+                label: "Ambiance — rangée du bas, 2e photo"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "band"
+                label: "Bandeau pleine largeur « Le plaisir se sert sur un plateau »"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false
+              - name: "gal_5"
+                label: "Ambiance — rangée du bas, 3e photo"
+                widget: "object"
+                collapsed: true
+                fields:
+                  - name: "src"
+                    label: "Photo (envoyez un fichier déjà léger, ~200 Ko, format 4:3 ou 3:4 selon l’emplacement)"
+                    widget: "image"
+                    required: false
+                  - name: "alt"
+                    label: "Description (Google, malvoyants)"
+                    widget: "string"
+                    required: false
+                  - name: "caption"
+                    label: "Légende affichée (facultatif)"
+                    widget: "string"
+                    required: false

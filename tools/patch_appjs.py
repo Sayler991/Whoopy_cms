@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""Remplace, dans site/assets/js/app.min.js, les horaires codés en dur par une lecture des
+attributs data-o du HTML (générés depuis content.json). À n'exécuter qu'une fois."""
+import re, os
+p = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'site/assets/js/app.min.js')
+s = open(p, encoding='utf-8').read()
+a = s.index('var W=[[690,1440]'); b = s.index('(function(){var e=h(".tab")')
+new = r'''var W=h(".hours li").map(function(l){var a=l.getAttribute("data-o")||"";return a?a.split("|").map(function(r){var p=r.split("-"),o=+p[0],x=+p[1];return[o,x]}):[]}),TZ=(f(".hours")||{getAttribute:function(){}}).getAttribute("data-tz")||"Africa/Algiers";function _(){try{var e=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,weekday:"short",hour:"2-digit",minute:"2-digit",hour12:!1}).formatToParts(new Date),n={};return e.forEach(function(r){n[r.type]=r.value}),{d:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(n.weekday),m:parseInt(n.hour,10)%24*60+parseInt(n.minute,10)}}catch(r){var t=new Date;return{d:(t.getDay()+6)%7,m:t.getHours()*60+t.getMinutes()}}}function Z(e){return e=e%1440,String(Math.floor(e/60)).padStart(2,"0")+"h"+String(e%60).padStart(2,"0")}var u=_(),J=h(".hours li");J[u.d]&&J[u.d].classList.add("today");var K=h(".status");if(K.length&&u.d>-1){var N=!1,M="",L=W[u.d]||[],Y0=W[(u.d+6)%7]||[],E0=0,T0=-1;L.forEach(function(r){var x=r[1]<=r[0]?r[1]+1440:r[1];u.m>=r[0]&&u.m<x&&(N=!0,E0=x)}),N||Y0.forEach(function(r){var x=r[1]<=r[0]?r[1]+1440:r[1];x>1440&&u.m+1440<x&&(N=!0,E0=x-1440)});if(N)M="Ouvert maintenant \xB7 jusqu\u2019\xE0 "+(E0%1440===0?"minuit":Z(E0));else{L.forEach(function(r){r[0]>u.m&&(T0<0||r[0]<T0)&&(T0=r[0])});if(T0>-1)M="Ferm\xE9 \xB7 ouvre \xE0 "+Z(T0);else{for(var kk=1;kk<=7;kk++){var RR=W[(u.d+kk)%7]||[];if(RR.length){var oo=Math.min.apply(null,RR.map(function(r){return r[0]})),nm=J[(u.d+kk)%7]?J[(u.d+kk)%7].firstChild.textContent.toLowerCase():"";M="Ferm\xE9 \xB7 ouvre "+(kk===1?"demain":nm)+" \xE0 "+Z(oo);break}}M||(M="Ferm\xE9")}}K.forEach(function(e){e.classList.add(N?"open":"closed"),e.querySelector("span").textContent=M,e.hidden=!1})}'''
+s = s[:a] + new + s[b:]
+open(p, 'w', encoding='utf-8').write(s)
+print('app.min.js patché')

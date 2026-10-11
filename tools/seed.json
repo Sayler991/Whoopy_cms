@@ -1,0 +1,476 @@
+{
+ "D": {
+  "og_title": "Whoopy Burger — Le bonheur entre deux pains · Tlemcen",
+  "og_desc": "Burgers, frites croustillantes, 5/5 sur Google. Bel Horizon, Tlemcen. Menu, horaires, itinéraire et téléphone.",
+  "tw_desc": "Burgers, frites croustillantes, 5/5 sur Google. Bel Horizon, Tlemcen.",
+  "badge_text": "Burgers · Frites · Bel Horizon · Tlemcen · ",
+  "cap_menu_1": "Burger & frites",
+  "cap_menu_2": "Poulet pané",
+  "cap_menu_3": "Pain brioché",
+  "cap_gal_1": "La fresque de la salle",
+  "cap_gal_2": "Rouge & blanc",
+  "cap_gal_3": "Au poulet pané",
+  "cap_gal_4": "Vue de la vitrine",
+  "cap_gal_5": "Brioché & fondant",
+  "hero_kicker": "Burgers & frites — Bel Horizon, Tlemcen",
+  "hero_lead": "Le bonheur entre deux pains : *frais, gourmand, irrésistible.*",
+  "hero_bubble": "Un croc et\ntu comprends !",
+  "rating_value": "5,0",
+  "rating_count": 35,
+  "about_title": "Des burgers *généreux*, des frites croustillantes",
+  "about_big": "Whoopy Burger, c’est l’adresse burgers du quartier Bel Horizon, à Tlemcen : du veau, du poulet pané, du poisson ou du thon entre deux pains, avec des ingrédients frais et des sauces qui font la différence.",
+  "about_text": "Dans la petite salle aux rayures rouges et blanches, une fresque de personnages de dessin animé attablés devant des burgers veille sur les tables. On vient entre amis ou en famille, on commande, on croque.",
+  "about_quote": "Burgers savoureux, frites croustillantes et produits de qualité au cœur de Tlemcen.",
+  "about_cite": "Présentation de Whoopy Burger sur Google Maps",
+  "services_title": "Ce que vous *trouverez*",
+  "services_lead": "Informations tirées de la fiche Google Maps et du compte Instagram @whoopy13.",
+  "band_title": "Le plaisir se sert *sur un plateau*",
+  "band_sub": "Bel Horizon · Tlemcen",
+  "menu_title": "Burgers & *suppléments*",
+  "menu_lead": "Les recettes et les prix de la carte publiée par le restaurant sur sa fiche Google Maps (photo de juin 2026).",
+  "menu_incl_title": "Tous les burgers contiennent aussi :",
+  "menu_incl_text": "tomate, oignons, cornichons, fromage…",
+  "menu_note": "Prix en dinars algériens (DA), relevés sur la photo de la carte publiée sur Google Maps : ils peuvent évoluer. Les boissons et desserts ne figurent pas sur cette carte : renseignez-vous auprès de l’équipe.",
+  "gallery_title": "La salle, la fresque, *les burgers*",
+  "reviews_title": "Ce que disent *les clients*",
+  "reviews_note": "Extraits d’avis publiés sur Google Maps, reproduits tels quels (le signe […] marque une coupe).",
+  "hours_title": "Quand *venir*",
+  "hours_note": "Horaires indiqués sur la fiche Google Maps (heure d’Algérie).",
+  "address": "Bel Horizon\nTlemcen 13000, Algérie",
+  "footer_tagline": "Le bonheur entre deux pains. Frais · Gourmand · Irrésistible."
+ },
+ "services": [
+  {
+   "icon": "burger",
+   "title": "Burgers maison",
+   "text": "Douze recettes : veau, poulet pané, poisson, thon… Du simple « Classic » au « Monster Burger » à double viande.",
+   "quote": "",
+   "quote_cite": ""
+  },
+  {
+   "icon": "fries",
+   "title": "Frites croustillantes",
+   "text": "« Des frites croustillantes à chaque bouchée » : une barquette de frites s’ajoute à votre burger.",
+   "quote": "",
+   "quote_cite": ""
+  },
+  {
+   "icon": "seat",
+   "title": "Sur place",
+   "text": "Une salle colorée, tables blanches et tabourets rouges. Un client en parle ainsi : « La salle n’est pas trop grande et très bien tenue ».",
+   "quote": "",
+   "quote_cite": ""
+  },
+  {
+   "icon": "moto",
+   "title": "Commande & livraison",
+   "text": "Commandez par téléphone au {tel}.",
+   "quote": "« 🛵 Livraison disponible »",
+   "quote_cite": "Publication Instagram @whoopy13, 10 septembre 2026"
+  }
+ ],
+ "picalls": {
+  "about_1": [
+   "salle2",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 70vw, 34vw",
+   "L’intérieur de Whoopy Burger : salle lumineuse aux rayures rouges et blanches, tables blanches et chaises rouges",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "about_2": [
+   "box",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 52vw, 28vw",
+   "Un burger brioché garni de poulet pané croustillant, de fromage fondu et de sauce, dans sa boîte en carton",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "gal_3": [
+   "box2",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 46vw, 30vw",
+   "Un burger au poulet pané, sauce blanche et salade dans une boîte ouverte",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "menu_2": [
+   "poulet",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 46vw, 30vw",
+   "Burger brioché aux morceaux de poulet pané et à la salade, posé sur un papier imprimé",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "menu_3": [
+   "brioche",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 46vw, 30vw",
+   "Burger au pain brioché doré dans une boîte en carton ouverte",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "menu_1": [
+   "plateau",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 92vw, 52vw",
+   "Un plateau Whoopy : burger au pain brioché, frites croustillantes et deux sauces",
+   [
+    1080,
+    608
+   ]
+  ],
+  "gal_1": [
+   "fresque",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 92vw, 58vw",
+   "La fresque murale de la salle : des personnages de dessin animé attablés devant des burgers, sous le logo Whoopy Burger",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "gal_2": [
+   "salle",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 92vw, 36vw",
+   "La salle de Whoopy Burger : plafond sombre, rayures rouges et blanches, tables blanches et chaises rouges",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "gal_4": [
+   "salle2",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 46vw, 30vw",
+   "Vue de la salle depuis la vitrine : tables, chaises rouges et fresque au fond",
+   [
+    1080,
+    1440
+   ]
+  ],
+  "band": [
+   "band",
+   [
+    1080
+   ],
+   "100vw",
+   "",
+   [
+    1080,
+    430
+   ]
+  ],
+  "gal_5": [
+   "box",
+   [
+    480,
+    800,
+    1080
+   ],
+   "(max-width:820px) 52vw, 28vw",
+   "Un burger brioché garni de poulet pané croustillant, de fromage fondu et de sauce, dans sa boîte en carton",
+   [
+    1080,
+    1440
+   ]
+  ]
+ },
+ "RV": [
+  [
+   "mohe69",
+   5,
+   "Google",
+   "Superbe adresse de burgers à Tlemcen ! Excellente expérience chez Whoopy Burger. Le choix de burgers est très varié (viande de veau, poulet, etc.) […] Service : Équipe professionnelle et accueillante. Une adresse vivement recommandée pour manger un bon burger au propre !"
+  ],
+  [
+   "hanane benhenni",
+   5,
+   "Google",
+   "Très bonne adresse si vous êtes à Tlemcen. Service au top et les burger sont excellents ! Je vous le recommande fortement"
+  ],
+  [
+   "Amine Boussalah",
+   5,
+   "Google",
+   "Excellent burger avec un bon pain brioché ! Ne changez rien ! Petite remarque sur les tenders poulet qui sont bon mais que je trouve trop épais."
+  ]
+ ],
+ "JOURS": [
+  [
+   "Lundi",
+   "11h30 – 00h00"
+  ],
+  [
+   "Mardi",
+   "11h30 – 00h00"
+  ],
+  [
+   "Mercredi",
+   "11h30 – 00h00"
+  ],
+  [
+   "Jeudi",
+   "11h30 – 00h00"
+  ],
+  [
+   "Vendredi",
+   "18h00 – 00h00"
+  ],
+  [
+   "Samedi",
+   "11h30 – 00h00"
+  ],
+  [
+   "Dimanche",
+   "11h30 – 00h00"
+  ]
+ ],
+ "BURGERS": [
+  [
+   "Ocean",
+   "Thon, gouda.",
+   250,
+   "Thon",
+   "f",
+   0
+  ],
+  [
+   "White",
+   "Viande hachée de poulet, œuf.",
+   300,
+   "Poulet",
+   "p",
+   0
+  ],
+  [
+   "Chicken Classic",
+   "Poulet pané.",
+   350,
+   "Poulet",
+   "p",
+   0
+  ],
+  [
+   "Classic",
+   "Viande hachée de veau.",
+   450,
+   "Veau",
+   "v",
+   0
+  ],
+  [
+   "Egg",
+   "Viande hachée de veau, œuf.",
+   500,
+   "Veau",
+   "v",
+   0
+  ],
+  [
+   "Chicken Spicy",
+   "Poulet pané épicé, gouda.",
+   500,
+   "Poulet",
+   "p",
+   1
+  ],
+  [
+   "Fish",
+   "Poisson, sauce tartare.",
+   600,
+   "Poisson",
+   "f",
+   0
+  ],
+  [
+   "Forest",
+   "Viande hachée de veau, champignons frais, gouda.",
+   600,
+   "Veau",
+   "v",
+   0
+  ],
+  [
+   "Chicken Cheese",
+   "Poulet pané, mozzarella panée, gouda, oignons caramélisés.",
+   600,
+   "Poulet",
+   "p",
+   0
+  ],
+  [
+   "Holland Cheese",
+   "Viande hachée de veau, camembert, gouda, oignons caramélisés, miel.",
+   650,
+   "Veau",
+   "v",
+   0
+  ],
+  [
+   "Blue Cheese",
+   "Viande hachée de veau, gouda, sauce roquefort.",
+   700,
+   "Veau",
+   "v",
+   0
+  ],
+  [
+   "Monster Burger",
+   "Double viande hachée de veau, double fromage slice, œuf, sauce Monster.",
+   750,
+   "Veau",
+   "v",
+   1
+  ]
+ ],
+ "SUPP": [
+  [
+   "Œuf",
+   50
+  ],
+  [
+   "Camembert",
+   100
+  ],
+  [
+   "Nugget",
+   100
+  ],
+  [
+   "Mozzarella panée",
+   150
+  ],
+  [
+   "Barquette de frites",
+   150
+  ],
+  [
+   "Steak haché",
+   200
+  ]
+ ],
+ "mq_items": [
+  "Le bonheur entre deux pains",
+  "Frais",
+  "Gourmand",
+  "Irrésistible",
+  "Bel Horizon · Tlemcen"
+ ],
+ "LAT": 34.8795084,
+ "LON": -1.3257918,
+ "PLACE": "ChIJt2qeawDJeA0RkkJoylFa3JI",
+ "GMAP": "https://www.google.com/maps/place/Whoopy+Burger/data=!4m2!3m1!1s0xd78c9006b9e6ab7:0x92dc5a51ca684292",
+ "IG": "https://www.instagram.com/whoopy13/",
+ "TEL": "+213552103462",
+ "TELD": "0552 10 34 62",
+ "URL": "http://127.0.0.1:8768",
+ "TITLE": "Whoopy Burger — Burgers & frites à Tlemcen (Bel Horizon)",
+ "DESC": "Whoopy Burger à Tlemcen (Bel Horizon) : burgers de veau, de poulet pané, de poisson, frites croustillantes. 5/5 sur Google. Ouvert jusqu’à minuit. Appelez le 0552 10 34 62.",
+ "ld": {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "@id": "http://127.0.0.1:8768/#restaurant",
+  "name": "Whoopy Burger",
+  "url": "http://127.0.0.1:8768/",
+  "image": [
+   "http://127.0.0.1:8768/assets/og-image.jpg"
+  ],
+  "logo": "http://127.0.0.1:8768/assets/logo.svg",
+  "description": "Burgers savoureux, frites croustillantes et produits de qualité au cœur de Tlemcen. Le bonheur entre deux pains : frais, gourmand, irrésistible.",
+  "servesCuisine": [
+   "Burgers"
+  ],
+  "telephone": "+213552103462",
+  "sameAs": [
+   "https://www.instagram.com/whoopy13/"
+  ],
+  "address": {
+   "@type": "PostalAddress",
+   "streetAddress": "Bel Horizon",
+   "addressLocality": "Tlemcen",
+   "postalCode": "13000",
+   "addressCountry": "DZ"
+  },
+  "geo": {
+   "@type": "GeoCoordinates",
+   "latitude": 34.8795084,
+   "longitude": -1.3257918
+  },
+  "hasMap": "https://www.google.com/maps/place/Whoopy+Burger/data=!4m2!3m1!1s0xd78c9006b9e6ab7:0x92dc5a51ca684292",
+  "openingHoursSpecification": [
+   {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+     "Monday",
+     "Tuesday",
+     "Wednesday",
+     "Thursday",
+     "Saturday",
+     "Sunday"
+    ],
+    "opens": "11:30",
+    "closes": "00:00"
+   },
+   {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": "Friday",
+    "opens": "18:00",
+    "closes": "00:00"
+   }
+  ],
+  "aggregateRating": {
+   "@type": "AggregateRating",
+   "ratingValue": "5.0",
+   "bestRating": "5",
+   "ratingCount": "35"
+  }
+ }
+}
