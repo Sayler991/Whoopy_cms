@@ -37,6 +37,7 @@
   var CFG = { url: String(CFG0.SUPABASE_URL || '').trim().replace(/\/+$/, ''), key: String(CFG0.SUPABASE_ANON_KEY || '').trim() };
   var CONFIGURED = /^https:\/\/.+/.test(CFG.url) && CFG.key.length > 20;
   var sb = (CONFIGURED && window.supabase && window.supabase.createClient) ? window.supabase.createClient(CFG.url, CFG.key) : null;
+  window.WHOOPY_SB = sb;   // utilisé par alerts.js
   var BUCKET = 'images';
   var STORAGE_URL = CFG.url + '/storage/v1/object/public/' + BUCKET + '/';
   var userEmail = '';
@@ -569,7 +570,6 @@
         list.textContent = '';
         if (!r.data.length) list.appendChild(h('p', { class: 'mut', text: 'Aucune commande à afficher.' }));
         var newest = r.data.reduce(function (m, o) { return Math.max(m, o.id); }, 0);
-        if (lastSeen && newest > lastSeen) toast('🔔 Nouvelle commande reçue !', 'ok');
         lastSeen = Math.max(lastSeen, newest);
         r.data.forEach(function (o) { list.appendChild(card(o)); });
       });

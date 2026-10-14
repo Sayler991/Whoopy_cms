@@ -364,6 +364,16 @@ create policy "commandes : envoi depuis le site" on public.orders
 create policy "commandes : patron" on public.orders
   for all to authenticated using (public.is_owner()) with check (public.is_owner());
 
+-- Temps réel : le tableau de bord est prévenu de chaque nouvelle commande
+-- (le RLS s'applique : seul le patron reçoit les événements).
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
+     and not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'orders') then
+    alter publication supabase_realtime add table public.orders;
+  end if;
+end $$;
+
 -- ---------------------------------------------------------------------
 -- 4. STORAGE : bucket public « images » (6 Mo, JPG/PNG/WebP)
 -- ---------------------------------------------------------------------
