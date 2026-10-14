@@ -698,6 +698,38 @@
     "alt": "Un burger brioché garni de poulet pané croustillant, de fromage fondu et de sauce, dans sa boîte en carton",
     "caption": "Brioché & fondant"
    }
+  },
+  "gal_6": {
+   "label": "Ambiance — rangée du bas, 4e photo",
+   "base": "burger-signature",
+   "ext": "webp",
+   "widths": [
+    480,
+    800
+   ],
+   "avif": true,
+   "w": 800,
+   "h": 1067,
+   "alt": "Un burger au pain brioché garni de salade, de tranches de tomate, de fromage fondu et d’un steak haché, posé sur un papier imprimé devant un sac rouge Whoopy Burger",
+   "caption": "Tomate, salade & fromage",
+   "sizes": "(max-width:820px) 46vw, 30vw",
+   "upload_ratio": [
+    3,
+    4
+   ],
+   "original": {
+    "base": "burger-signature",
+    "ext": "webp",
+    "widths": [
+     480,
+     800
+    ],
+    "avif": true,
+    "w": 800,
+    "h": 1067,
+    "alt": "Un burger au pain brioché garni de salade, de tranches de tomate, de fromage fondu et d’un steak haché, posé sur un papier imprimé devant un sac rouge Whoopy Burger",
+    "caption": "Tomate, salade & fromage"
+   }
   }
  }
 }
