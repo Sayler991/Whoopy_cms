@@ -40,7 +40,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .f{display:grid;gap:.35rem;margin:0;min-width:0}
 .f>span{font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--g2);font-weight:500}
 .f small{color:var(--mut);font-size:.85rem;line-height:1.35}
-input[type=text],input[type=number],input[type=password],input[type=time],input[type=url],input[type=tel],select,textarea{width:100%;min-height:46px;padding:.65rem .85rem;background:var(--bg);border:2px solid var(--line);border-radius:8px;color:var(--ink);font-size:1rem}
+input[type=text],input[type=search],input[type=email],input[type=number],input[type=password],input[type=time],input[type=url],input[type=tel],select,textarea{width:100%;min-height:46px;padding:.65rem .85rem;background:var(--bg);border:2px solid var(--line);border-radius:8px;color:var(--ink);font-size:1rem}
 textarea{resize:vertical;line-height:1.45;min-height:84px}
 input:focus,select:focus,textarea:focus{border-color:var(--g2);outline:none;box-shadow:0 0 0 3px #ffc22e33}
 select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--g2) 50%),linear-gradient(135deg,var(--g2) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:2.2rem}
@@ -160,3 +160,26 @@ details.adv>div{display:grid;gap:1rem;padding-bottom:1rem}
 .tsel{display:inline-flex;align-items:center;gap:.35rem}.tsel select{width:5.4rem;font-size:1.05rem;font-variant-numeric:tabular-nums}
 
 .card,.item,.day,.ph,.ph-b,.modal-c,details.adv>div,.login-card{grid-template-columns:minmax(0,1fr)}
+
+/* ───── CRM (commandes, clients, statistiques) ───── */
+.crm-bar{display:flex;gap:1rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem}
+.crm-bar .f{margin:0}
+.crm-list{display:grid;gap:.9rem}
+.crm-o{border-left:6px solid #888}
+.crm-o[data-st="nouvelle"]{border-left-color:#e0161e}
+.crm-o[data-st="en préparation"]{border-left-color:#f29a12}
+.crm-o[data-st="prête"]{border-left-color:#3aa655}
+.crm-o[data-st="livrée"]{border-left-color:#5b7cff;opacity:.85}
+.crm-o[data-st="annulée"]{border-left-color:#777;opacity:.6}
+.crm-cols{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media (max-width:700px){.crm-cols{grid-template-columns:1fr}}
+.crm-cols p{margin:.2rem 0}
+.crm-items{margin:0;padding-left:1.1rem}
+.crm-st{max-width:16rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:.9rem;margin-bottom:1.2rem}
+.kpi{display:grid;gap:.2rem;padding:1rem 1.2rem;border-radius:16px;background:rgba(255,194,46,.08);border:1px solid rgba(255,194,46,.3)}
+.kpi b{font-size:1.6rem}
+.crm-tab{width:100%;border-collapse:collapse}
+.crm-tab th,.crm-tab td{text-align:left;padding:.45rem .5rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.crm-tab .barc{width:35%}
+.crm-tab .bar{display:block;height:.7rem;border-radius:99px;background:linear-gradient(90deg,#ffc22e,#e0161e);min-width:2px}

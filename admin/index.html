@@ -15,9 +15,11 @@
   <form class="login-card" id="login-form" autocomplete="on">
     <img class="login-logo" src="/assets/logo.svg" alt="Whoopy Burger" width="220" height="70">
     <h1>Tableau de bord</h1>
-    <p class="mut">Entrez le mot de passe pour modifier votre site.</p>
+    <p class="mut">Connectez-vous avec l’e-mail et le mot de passe du patron.</p>
+    <label class="f"><span>E-mail</span>
+      <input id="login-email" type="email" autocomplete="username" required autofocus></label>
     <label class="f"><span>Mot de passe</span>
-      <input id="login-pw" type="password" autocomplete="current-password" required autofocus></label>
+      <input id="login-pw" type="password" autocomplete="current-password" required></label>
     <p class="login-err" id="login-err" role="alert" hidden></p>
     <button class="btn btn-solid" type="submit">Se connecter</button>
   </form>
@@ -25,6 +27,8 @@
 <div id="boot" class="boot">Chargement…</div>
 <div id="toasts" aria-live="polite"></div>
 <noscript><p style="padding:2rem">Le tableau de bord a besoin de JavaScript.</p></noscript>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<script src="/config.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

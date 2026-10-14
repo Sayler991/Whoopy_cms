@@ -1,9 +1,9 @@
-/* Tableau de bord Whoopy Burger — JavaScript sans dépendance */
+/* Tableau de bord Whoopy Burger — version Supabase (CMS + commandes/clients). Dépend de supabase-js (CDN) et de /config.js */
 'use strict';
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var C = null;              // contenu en cours d'édition
-  var dirty = false, mode = 'server', tab = 'carte', mustChange = false;
+  var dirty = false, mode = 'server', tab = 'commandes', mustChange = false;
   var pending = new Map();   // nom de fichier → Blob (photos préparées, pour aperçu + export)
   var IMGPATH = '/assets/img/';
 
@@ -32,18 +32,92 @@
     $('#toasts').appendChild(t);
     setTimeout(function () { t.remove(); }, type === 'er' ? 8000 : 3500);
   }
+  /* ───────── connexion Supabase (config : /config.js) ───────── */
+  var CFG0 = window.WHOOPY_CONFIG || {};
+  var CFG = { url: String(CFG0.SUPABASE_URL || '').trim().replace(/\/+$/, ''), key: String(CFG0.SUPABASE_ANON_KEY || '').trim() };
+  var CONFIGURED = /^https:\/\/.+/.test(CFG.url) && CFG.key.length > 20;
+  var sb = (CONFIGURED && window.supabase && window.supabase.createClient) ? window.supabase.createClient(CFG.url, CFG.key) : null;
+  var BUCKET = 'images';
+  var STORAGE_URL = CFG.url + '/storage/v1/object/public/' + BUCKET + '/';
+  var userEmail = '';
+
+  function fail(msg, status) { var e = new Error(msg); e.status = status; return e; }
+  function toInt(v, label) {
+    var n = typeof v === 'string' ? Number(v.trim().replace(/\s/g, '').replace(',', '.')) : v;
+    if (typeof n !== 'number' || !isFinite(n) || Math.floor(n) !== n) throw fail(label + ' : nombre entier attendu', 422);
+    return n;
+  }
+  function prepare(c) {
+    var o = JSON.parse(JSON.stringify(c));
+    (o.menu.burgers || []).forEach(function (b, i) { b.price = toInt(b.price, 'Burger #' + (i + 1) + ' › prix'); if (!String(b.name || '').trim()) throw fail('Burger #' + (i + 1) + ' : nom obligatoire', 422); });
+    (o.menu.supplements || []).forEach(function (b, i) { b.price = toInt(b.price, 'Supplément #' + (i + 1) + ' › prix'); if (!String(b.name || '').trim()) throw fail('Supplément #' + (i + 1) + ' : nom obligatoire', 422); });
+    (o.reviews.items || []).forEach(function (r, i) { r.stars = toInt(r.stars, 'Avis #' + (i + 1) + ' › étoiles'); if (r.stars < 1 || r.stars > 5) throw fail('Avis #' + (i + 1) + ' : étoiles entre 1 et 5', 422); });
+    o.rating.count = toInt(o.rating.count, 'Nombre d’avis Google');
+    ['lat', 'lon'].forEach(function (k) { var n = Number(String(o.contact[k]).replace(',', '.')); if (!isFinite(n)) throw fail('Contact › ' + k + ' : nombre attendu', 422); o.contact[k] = n; });
+    if (!o.hours.days || o.hours.days.length !== 7) throw fail('Horaires : les 7 jours sont obligatoires', 422);
+    o.hours.days.forEach(function (d) { (d.ranges || []).forEach(function (r) { r.forEach(function (t) { if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(t)) throw fail('Horaires › ' + d.day + ' : heure invalide « ' + t + ' »', 422); }); }); });
+    if (JSON.stringify(o).length > 1000000) throw fail('Contenu trop volumineux (1 Mo max).', 413);
+    return o;
+  }
+  function sbErr(error, fallback) {
+    if (error && error.code === 'PGRST116') return fail('Refusé : session expirée ou droits insuffisants. Reconnectez-vous.', 403);
+    if (error && error.code === '42501') return fail('Refusé : ce compte n’a pas les droits du patron.', 403);
+    return fail(error && error.message ? error.message : fallback, error && error.status ? error.status : 500);
+  }
+  function hhmmss() { var d = new Date(); return [d.getHours(), d.getMinutes(), d.getSeconds()].map(function (n) { return String(n).padStart(2, '0'); }).join(':'); }
+
+  // Même « contrat » que l'ancienne api() du serveur Python.
   function api(method, path, body, raw) {
-    var o = { method: method, credentials: 'same-origin', headers: { 'X-Requested-With': 'whoopy-admin' } };
-    if (body !== undefined) {
-      if (raw) { o.body = body; o.headers['Content-Type'] = 'application/octet-stream'; }
-      else { o.body = JSON.stringify(body); o.headers['Content-Type'] = 'application/json'; }
-    }
-    return fetch('/admin/api/' + path, o).then(function (r) {
-      return r.json().catch(function () { return { ok: false, error: 'Réponse inattendue du serveur.' }; }).then(function (j) {
-        if (r.status === 401 && path !== 'login') { showLogin('Votre session a expiré. Reconnectez-vous.'); }
-        if (!r.ok) { var e = new Error(j.error || ('Erreur ' + r.status)); e.status = r.status; throw e; }
-        return j;
+    if (!sb) return Promise.reject(fail('Supabase non configuré.', 503));
+    var name = path.split('?')[0], q = new URLSearchParams(path.split('?')[1] || '');
+    if (name === 'login' && method === 'POST') {
+      return sb.auth.signInWithPassword({ email: body.email, password: body.password }).then(function (r) {
+        if (r.error) throw fail(/confirm/i.test(r.error.message) ? 'Adresse e-mail non confirmée (voir le guide, étape 4).' : 'E-mail ou mot de passe incorrect.', 401);
+        return { ok: true, must_change: false };
       });
+    }
+    return sb.auth.getSession().then(function (s) {
+      if (!s.data.session) { showLogin('Votre session a expiré. Reconnectez-vous.'); throw fail('Session expirée.', 401); }
+      userEmail = s.data.session.user.email || userEmail;
+      if (name === 'content' && method === 'GET')
+        return sb.from('site_content').select('data').eq('id', 1).maybeSingle().then(function (r) {
+          if (r.error) throw sbErr(r.error, 'Lecture impossible.');
+          if (!r.data) throw fail('Aucun contenu dans Supabase : relancez supabase/schema.sql (il insère le contenu initial).', 404);
+          return { ok: true, content: r.data.data };
+        });
+      if (name === 'content' && method === 'PUT') {
+        var clean = prepare(body);
+        return sb.from('site_content').update({ data: clean }).eq('id', 1).select('data').single().then(function (r) {
+          if (r.error) throw sbErr(r.error, 'Enregistrement refusé (êtes-vous connecté ?).');
+          return { ok: true, saved_at: hhmmss(), content: r.data.data };
+        });
+      }
+      if (name === 'upload' && method === 'POST') {
+        var file = 'up-' + q.get('slot') + '-' + q.get('set') + '-' + q.get('w') + '.' + q.get('ext');
+        return sb.storage.from(BUCKET).upload(file, body, { contentType: body.type, cacheControl: '31536000', upsert: false }).then(function (r) {
+          if (r.error) throw sbErr(r.error, 'Envoi de la photo impossible.');
+          return { ok: true, base: 'up-' + q.get('slot') + '-' + q.get('set'), w: +q.get('w'), ext: q.get('ext'), bytes: body.size };
+        });
+      }
+      if (name === 'backups' && method === 'GET')
+        return sb.from('site_content_history').select('id,saved_at').order('id', { ascending: false }).limit(12).then(function (r) {
+          if (r.error) throw sbErr(r.error, 'Historique indisponible.');
+          return { ok: true, backups: r.data.map(function (b) { return { name: String(b.id), label: new Date(b.saved_at).toLocaleString('fr-FR') }; }) };
+        });
+      if (name === 'restore' && method === 'POST')
+        return sb.from('site_content_history').select('data').eq('id', parseInt(body.name, 10)).single().then(function (hh) {
+          if (hh.error) throw sbErr(hh.error, 'Version introuvable.');
+          return sb.from('site_content').update({ data: hh.data.data }).eq('id', 1).select('data').single();
+        }).then(function (r) { if (r.error) throw sbErr(r.error, 'Restauration refusée.'); return { ok: true, content: r.data.data }; });
+      if (name === 'password' && method === 'POST') {
+        if (!body.new || body.new.length < 8) throw fail('Le nouveau mot de passe doit contenir au moins 8 caractères.', 422);
+        return sb.auth.signInWithPassword({ email: userEmail, password: body.old }).then(function (r) {
+          if (r.error) throw fail('Mot de passe actuel incorrect.', 403);
+          return sb.auth.updateUser({ password: body.new });
+        }).then(function (r) { if (r.error) throw sbErr(r.error, 'Changement impossible.'); return { ok: true }; });
+      }
+      if (name === 'logout') return sb.auth.signOut().then(function () { return { ok: true }; });
+      throw fail('Service inconnu.', 404);
     });
   }
   function get(o, p) { for (var i = 0; i < p.length; i++) o = o == null ? o : o[p[i]]; return o; }
@@ -94,10 +168,11 @@
   }
 
   /* ───────── onglets ───────── */
-  var TABS = [['carte', '🍔', 'La carte'], ['horaires', '🕐', 'Horaires'], ['infos', '📞', 'Contact'], ['textes', '✏️', 'Textes'], ['avis', '⭐', 'Avis'], ['photos', '📷', 'Photos'], ['apercu', '👁️', 'Aperçu'], ['reglages', '⚙️', 'Réglages']];
+  var TABS = [['commandes', '🧾', 'Commandes'], ['clients', '👥', 'Clients'], ['stats', '📈', 'Statistiques'], ['carte', '🍔', 'La carte'], ['horaires', '🕐', 'Horaires'], ['infos', '📞', 'Contact'], ['textes', '✏️', 'Textes'], ['avis', '⭐', 'Avis'], ['photos', '📷', 'Photos'], ['apercu', '👁️', 'Aperçu'], ['reglages', '⚙️', 'Réglages']];
   function renderTab() {
     var y = window.scrollY, m = $('#main'); m.textContent = '';
-    var fn = { carte: tCarte, horaires: tHoraires, infos: tInfos, textes: tTextes, avis: tAvis, photos: tPhotos, apercu: tApercu, reglages: tReglages }[tab];
+    stopRefresh();
+    var fn = { commandes: tCommandes, clients: tClients, stats: tStats, carte: tCarte, horaires: tHoraires, infos: tInfos, textes: tTextes, avis: tAvis, photos: tPhotos, apercu: tApercu, reglages: tReglages }[tab];
     if (mustChange && tab !== 'reglages') m.appendChild(h('div', { class: 'note warn', style: 'margin-bottom:1.2rem' }, 'Vous utilisez encore le mot de passe par défaut. ', h('a', { href: '#reglages', onclick: function (e) { e.preventDefault(); go('reglages'); }, text: 'Le changer maintenant →' })));
     m.appendChild(fn());
     document.querySelectorAll('.side button').forEach(function (b) { b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'); });
@@ -260,6 +335,7 @@
     if (p.src) return '/' + p.src;
     var mid = p.widths[Math.floor(p.widths.length / 2)], name = p.base + '-' + mid + '.' + p.ext;
     if (pending.has(name)) { if (!pending.get(name).url) pending.get(name).url = URL.createObjectURL(pending.get(name).blob); return pending.get(name).url; }
+    if (/^up-/.test(p.base)) return STORAGE_URL + name;      // photos téléversées : Supabase Storage
     return IMGPATH + name;
   }
   function tPhotos() {
@@ -356,12 +432,12 @@
   /* — Aperçu — */
   function tApercu() {
     var w = h('div'), phone = false;
-    add(w, head('Aperçu', 'Voici le site avec vos modifications (même celles pas encore enregistrées).'));
+    add(w, head('Aperçu', 'Voici le site en ligne tel que les visiteurs le voient. Les modifications apparaissent ici dès que vous avez cliqué sur « Enregistrer » (pas besoin de republier le site).'));
+    if (dirty) w.appendChild(h('p', { class: 'note warn', text: 'Vous avez des modifications non enregistrées : elles ne sont pas encore visibles ci-dessous.' }));
     var wrap = h('div', { class: 'pv-wrap' }), fr = h('iframe', { class: 'pv-frame', title: 'Aperçu du site' });
     wrap.appendChild(fr);
     function load() {
-      if (mode !== 'server') { wrap.replaceChildren(h('p', { class: 'note', text: 'L’aperçu n’est disponible qu’avec le serveur local (python3 server.py).' })); return; }
-      api('POST', 'preview', C).then(function (j) { fr.src = j.url; }).catch(function (e) { toast(e.message, 'er'); });
+      fr.src = '/?apercu=' + Date.now();   // le site lit le contenu ENREGISTRÉ dans Supabase
     }
     w.appendChild(h('div', { class: 'pv-bar' },
       h('button', { class: 'btn btn-line btn-sm', type: 'button', onclick: function () { phone = false; wrap.classList.remove('phone'); } }, '🖥️ Ordinateur'),
@@ -384,7 +460,7 @@
       } }, 'Changer le mot de passe')));
     var bl = h('div', { class: 'item' }, h('p', { class: 'mut', text: 'Chargement…' }));
     w.appendChild(h('section', { class: 'card' }, h('h3', { text: 'Sauvegardes automatiques' }),
-      h('p', { class: 'sm mut', text: 'Une copie de l’ancien contenu est conservée à chaque enregistrement (les 40 dernières). Vous pouvez revenir en arrière.' }), bl));
+      h('p', { class: 'sm mut', text: 'Une copie de l’ancien contenu est conservée dans Supabase à chaque enregistrement (les 40 dernières). Vous pouvez revenir en arrière.' }), bl));
     if (mode === 'server') api('GET', 'backups').then(function (j) {
       bl.textContent = '';
       if (!j.backups.length) bl.appendChild(h('p', { class: 'mut', text: 'Aucune sauvegarde pour l’instant.' }));
@@ -394,9 +470,9 @@
           api('POST', 'restore', { name: b.name }).then(function (r) { C = r.content; dirty = false; updStatus(); toast('Version restaurée.', 'ok'); renderTab(); }).catch(function (e) { toast(e.message, 'er'); });
         } }, 'Restaurer')));
       });
-    }).catch(function () { bl.textContent = 'Indisponible.'; }); else bl.textContent = 'Disponible avec le serveur local.';
+    }).catch(function () { bl.textContent = 'Indisponible.'; }); else bl.textContent = 'Indisponible.';
     w.appendChild(h('section', { class: 'card' }, h('h3', { text: 'Exporter' }),
-      h('p', { class: 'sm mut', text: 'Télécharge un fichier .zip avec content.json et les nouvelles photos. Utile pour mettre le site en ligne (Netlify, etc.) — voir le README.' }),
+      h('p', { class: 'sm mut', text: 'Télécharge une copie de sauvegarde (.zip) avec content.json et les photos préparées dans cette session.' }),
       h('button', { class: 'btn btn-line', type: 'button', style: 'justify-self:start', onclick: doExport }, '⬇ Exporter content.json + photos')));
     return w;
   }
@@ -406,7 +482,7 @@
     if (mode !== 'server') return doExport();
     var bs = document.querySelectorAll('[data-save]'); bs.forEach(function (b) { b.disabled = true; });
     return api('PUT', 'content', C).then(function (j) {
-      C = j.content; dirty = false; updStatus(); toast('✔ Enregistré à ' + j.saved_at + ' — le site est à jour.', 'ok'); renderTab();
+      C = j.content; dirty = false; updStatus(); toast('✔ Enregistré à ' + j.saved_at + ' — le site affiche déjà la nouvelle version.', 'ok'); renderTab();
     }).catch(function (e) { toast('Non enregistré : ' + e.message, 'er'); bs.forEach(function (b) { b.disabled = false; }); });
   }
   var crcT = (function () { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
@@ -444,15 +520,139 @@
     });
   }
 
+  /* ───────── CRM : commandes, clients, statistiques ───────── */
+  var STATUSES = ['nouvelle', 'en préparation', 'prête', 'livrée', 'annulée'];
+  var ST_ICON = { 'nouvelle': '🆕', 'en préparation': '👨‍🍳', 'prête': '✅', 'livrée': '📦', 'annulée': '✕' };
+  var orderFilter = 'actives', refreshT = null, lastSeen = 0;
+  function dt(s) { return new Date(s).toLocaleString('fr-FR', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+  function da(n) { return (Number(n) || 0).toLocaleString('fr-FR') + ' DA'; }
+  function needSb(w) { if (!sb) { w.appendChild(h('p', { class: 'note warn', text: 'Supabase non configuré.' })); return false; } return true; }
+  function stopRefresh() { if (refreshT) { clearInterval(refreshT); refreshT = null; } }
+
+  function tCommandes() {
+    var w = h('div'); add(w, head('Commandes', 'Les commandes envoyées depuis le formulaire du site. Changez le statut au fur et à mesure. La liste se met à jour toute seule toutes les 30 secondes.'));
+    if (!needSb(w)) return w;
+    var list = h('div', { class: 'crm-list' }, h('p', { class: 'mut', text: 'Chargement…' }));
+    var sel = h('select', { onchange: function (e) { orderFilter = e.target.value; load(); } },
+      [['actives', 'En cours (nouvelles, en préparation, prêtes)'], ['toutes', 'Toutes']].concat(STATUSES.map(function (s) { return [s, 'Seulement : ' + s]; }))
+        .map(function (o) { return h('option', { value: o[0], selected: o[0] === orderFilter }, o[1]); }));
+    w.appendChild(h('div', { class: 'crm-bar' }, h('label', { class: 'f' }, h('span', { text: 'Afficher' }), sel),
+      h('button', { class: 'btn btn-line btn-sm', type: 'button', onclick: function () { load(); } }, '↻ Actualiser')));
+    w.appendChild(list);
+    function card(o) {
+      var c = o.customers || {};
+      var st = h('select', { class: 'st-sel', 'aria-label': 'Statut de la commande ' + o.id, onchange: function (e) {
+        var v = e.target.value, prev = o.status; e.target.disabled = true;
+        sb.from('orders').update({ status: v }).eq('id', o.id).select('id').single().then(function (r) {
+          e.target.disabled = false;
+          if (r.error) { e.target.value = prev; return toast('Statut non modifié : ' + sbErr(r.error, '').message, 'er'); }
+          o.status = v; it.dataset.st = v; toast('Commande n° ' + o.id + ' : ' + v + '.', 'ok');
+        });
+      } }, STATUSES.map(function (s) { return h('option', { value: s, selected: s === o.status }, ST_ICON[s] + ' ' + s); }));
+      var it = h('article', { class: 'item crm-o', 'data-st': o.status },
+        h('div', { class: 'item-h' }, h('b', { text: 'N° ' + o.id + ' — ' + da(o.total) }), h('span', { class: 'mut sm', text: dt(o.created_at) })),
+        h('div', { class: 'crm-cols' },
+          h('div', null,
+            h('p', null, h('b', { text: c.name || '(client supprimé)' }), ' · ', c.phone ? h('a', { href: 'tel:' + String(c.phone).replace(/[^0-9+]/g, ''), text: c.phone }) : ''),
+            h('p', { class: 'sm' }, o.fulfillment === 'livraison' ? '🛵 Livraison : ' + (o.address || '?') : '🥡 À emporter'),
+            o.notes ? h('p', { class: 'sm note', text: '💬 ' + o.notes }) : null),
+          h('ul', { class: 'crm-items' }, (o.items || []).map(function (x) { return h('li', null, h('b', { text: x.qty + ' × ' }), String(x.name), h('span', { class: 'mut', text: ' (' + da(x.price * x.qty) + ')' })); }))),
+        h('label', { class: 'f crm-st' }, h('span', { text: 'Statut' }), st));
+      return it;
+    }
+    function load() {
+      var qy = sb.from('orders').select('id,created_at,items,total,status,fulfillment,address,notes,customers(name,phone)').order('created_at', { ascending: false }).limit(200);
+      if (orderFilter === 'actives') qy = qy.in('status', ['nouvelle', 'en préparation', 'prête']);
+      else if (orderFilter !== 'toutes') qy = qy.eq('status', orderFilter);
+      qy.then(function (r) {
+        if (r.error) { list.replaceChildren(h('p', { class: 'note warn', text: sbErr(r.error, 'Lecture impossible.').message })); return; }
+        list.textContent = '';
+        if (!r.data.length) list.appendChild(h('p', { class: 'mut', text: 'Aucune commande à afficher.' }));
+        var newest = r.data.reduce(function (m, o) { return Math.max(m, o.id); }, 0);
+        if (lastSeen && newest > lastSeen) toast('🔔 Nouvelle commande reçue !', 'ok');
+        lastSeen = Math.max(lastSeen, newest);
+        r.data.forEach(function (o) { list.appendChild(card(o)); });
+      });
+    }
+    load(); stopRefresh(); refreshT = setInterval(function () { if (tab === 'commandes' && document.visibilityState === 'visible') load(); }, 30000);
+    return w;
+  }
+
+  function tClients() {
+    var w = h('div'); add(w, head('Clients', 'Les personnes qui ont commandé sur le site (un numéro de téléphone = une fiche). Les notes ne sont visibles que par vous.'));
+    if (!needSb(w)) return w;
+    var all = [], list = h('div', { class: 'crm-list' }, h('p', { class: 'mut', text: 'Chargement…' }));
+    var search = h('input', { type: 'search', placeholder: 'Rechercher un nom ou un numéro…', oninput: function () { draw(); } });
+    w.appendChild(h('div', { class: 'crm-bar' }, h('label', { class: 'f', style: 'flex:1' }, h('span', { text: 'Recherche' }), search)));
+    w.appendChild(list);
+    function draw() {
+      var q = search.value.trim().toLowerCase(); list.textContent = '';
+      var rows = all.filter(function (c) { return !q || (c.name + ' ' + c.phone).toLowerCase().indexOf(q) >= 0 || c.phone.replace(/\D/g, '').indexOf(q.replace(/\D/g, '') || '§') >= 0; });
+      if (!rows.length) list.appendChild(h('p', { class: 'mut', text: all.length ? 'Aucun client ne correspond.' : 'Aucun client pour l’instant.' }));
+      rows.forEach(function (c) {
+        var orders = c.orders || [], valid = orders.filter(function (o) { return o.status !== 'annulée'; });
+        var spent = valid.reduce(function (s, o) { return s + (o.total || 0); }, 0);
+        var last = orders.reduce(function (m, o) { return o.created_at > m ? o.created_at : m; }, '');
+        var ta = h('textarea', { rows: 2, maxlength: 2000, placeholder: 'Ex. préfère sans oignons…' }); ta.value = c.notes || '';
+        list.appendChild(h('article', { class: 'item' },
+          h('div', { class: 'item-h' }, h('b', { text: c.name }), h('a', { href: 'tel:' + c.phone.replace(/[^0-9+]/g, ''), text: c.phone })),
+          h('p', { class: 'sm mut', text: orders.length + ' commande(s) · ' + da(spent) + ' (hors annulées)' + (last ? ' · dernière : ' + dt(last) : '') + ' · client depuis le ' + new Date(c.created_at).toLocaleDateString('fr-FR') }),
+          h('label', { class: 'f' }, h('span', { text: 'Notes' }), ta),
+          h('button', { class: 'btn btn-line btn-sm', type: 'button', style: 'justify-self:start', onclick: function (e) {
+            var b = e.target; b.disabled = true;
+            sb.from('customers').update({ notes: ta.value.trim() || null }).eq('id', c.id).select('id').single().then(function (r) {
+              b.disabled = false; if (r.error) return toast('Note non enregistrée : ' + sbErr(r.error, '').message, 'er');
+              c.notes = ta.value.trim(); toast('Note enregistrée.', 'ok');
+            });
+          } }, 'Enregistrer la note')));
+      });
+    }
+    sb.from('customers').select('id,name,phone,notes,created_at,orders(total,status,created_at)').order('created_at', { ascending: false }).limit(1000).then(function (r) {
+      if (r.error) { list.replaceChildren(h('p', { class: 'note warn', text: sbErr(r.error, 'Lecture impossible.').message })); return; }
+      all = r.data; draw();
+    });
+    return w;
+  }
+
+  function tStats() {
+    var w = h('div'); add(w, head('Statistiques', 'Nombre de commandes et chiffre d’affaires par jour (heure d’Algérie). Les commandes annulées ne comptent pas dans le chiffre d’affaires.'));
+    if (!needSb(w)) return w;
+    var box = h('div', null, h('p', { class: 'mut', text: 'Chargement…' })); w.appendChild(box);
+    var since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+    sb.from('orders_daily').select('*').gte('day', since).order('day', { ascending: false }).then(function (r) {
+      if (r.error) { box.replaceChildren(h('p', { class: 'note warn', text: sbErr(r.error, 'Lecture impossible.').message })); return; }
+      var rows = r.data, today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Algiers' }).format(new Date());
+      var d7 = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
+      function sum(f, k) { return rows.filter(f).reduce(function (s, x) { return s + Number(x[k] || 0); }, 0); }
+      var kp = function (label, n, ca) { return h('div', { class: 'kpi' }, h('span', { class: 'mut sm', text: label }), h('b', { text: n + ' cmd' }), h('span', { text: da(ca) })); };
+      box.textContent = '';
+      box.appendChild(h('div', { class: 'kpis' },
+        kp('Aujourd’hui', sum(function (x) { return x.day === today; }, 'orders_valid'), sum(function (x) { return x.day === today; }, 'revenue_da')),
+        kp('7 derniers jours', sum(function (x) { return x.day >= d7; }, 'orders_valid'), sum(function (x) { return x.day >= d7; }, 'revenue_da')),
+        kp('30 derniers jours', sum(function () { return true; }, 'orders_valid'), sum(function () { return true; }, 'revenue_da'))));
+      if (!rows.length) { box.appendChild(h('p', { class: 'mut', text: 'Pas encore de commande sur les 30 derniers jours.' })); return; }
+      var max = rows.reduce(function (m, x) { return Math.max(m, Number(x.revenue_da)); }, 1);
+      box.appendChild(h('section', { class: 'card' }, h('h3', { text: 'Par jour' }),
+        h('table', { class: 'crm-tab' }, h('thead', null, h('tr', null, h('th', { text: 'Jour' }), h('th', { text: 'Commandes' }), h('th', { text: 'Annulées' }), h('th', { text: 'Chiffre d’affaires' }), h('th', { text: '' }))),
+          h('tbody', null, rows.map(function (x) {
+            return h('tr', null, h('td', { text: new Date(x.day + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: '2-digit' }) }),
+              h('td', { text: String(x.orders_valid) }), h('td', { text: String(x.orders_count - x.orders_valid) }), h('td', { text: da(x.revenue_da) }),
+              h('td', { class: 'barc' }, h('i', { class: 'bar', style: 'width:' + Math.round(100 * x.revenue_da / max) + '%' })));
+          })))));
+    });
+    return w;
+  }
+
   /* ───────── démarrage / connexion ───────── */
   function showLogin(msg) {
     $('#boot').hidden = true; $('#app').hidden = true; $('#login').hidden = false;
     var e = $('#login-err'); if (msg) { e.textContent = msg; e.hidden = false; } else e.hidden = true;
-    setTimeout(function () { $('#login-pw').focus(); }, 50);
+    setTimeout(function () { ($('#login-email').value ? $('#login-pw') : $('#login-email')).focus(); }, 50);
   }
   $('#login-form').addEventListener('submit', function (ev) {
-    ev.preventDefault(); var pw = $('#login-pw').value, e = $('#login-err'); e.hidden = true;
-    api('POST', 'login', { password: pw }).then(function (j) { $('#login-pw').value = ''; mustChange = j.must_change; start(); })
+    ev.preventDefault(); var pw = $('#login-pw').value, em = $('#login-email').value.trim(), e = $('#login-err'); e.hidden = true;
+    if (!sb) { e.textContent = 'Supabase non configuré.'; e.hidden = false; return; }
+    api('POST', 'login', { email: em, password: pw }).then(function (j) { $('#login-pw').value = ''; mustChange = j.must_change; start(); })
       .catch(function (er) { e.textContent = er.message; e.hidden = false; });
   });
   function build() {
@@ -464,7 +664,7 @@
       mode === 'server' ? h('button', { class: 'btn btn-line btn-sm', type: 'button', onclick: logout }, 'Quitter') : null);
     var side = h('nav', { class: 'side', 'aria-label': 'Sections' }, TABS.map(function (t) {
       return h('button', { type: 'button', 'data-tab': t[0], onclick: function () { go(t[0]); } }, h('span', { class: 'ic', text: t[1] }), h('span', { text: t[2] }));
-    }), h('p', { class: 'hint', text: 'Vos modifications ne sont publiées sur le site qu’après « Enregistrer ».' }));
+    }), h('p', { class: 'hint', text: 'Carte, horaires, textes, photos : vos modifications sont publiées dès que vous cliquez sur « Enregistrer ». Les commandes et clients s’enregistrent tout de suite.' }));
     var bar = h('div', { class: 'savebar' }, h('button', { class: 'btn btn-line', type: 'button', onclick: function () { go('apercu'); } }, '👁️ Aperçu'),
       h('button', { class: 'btn btn-solid', type: 'button', 'data-save': '', onclick: save }, mode === 'server' ? '💾 Enregistrer' : '⬇ Exporter'));
     app.appendChild(top);
@@ -477,21 +677,28 @@
   }
   function begin(content) {
     C = content; $('#boot').hidden = true; $('#login').hidden = true; $('#app').hidden = false;
-    build(); var t = (location.hash || '').slice(1); tab = TABS.some(function (x) { return x[0] === t; }) ? t : 'carte'; renderTab();
+    build(); var t = (location.hash || '').slice(1); tab = TABS.some(function (x) { return x[0] === t; }) ? t : 'commandes'; renderTab();
   }
   function start() {
+    sb.rpc('is_owner').then(function (r) {
+      if (r.error || r.data !== true) { showLogin(r.error ? 'Vérification des droits impossible : ' + r.error.message : 'Ce compte n’est pas enregistré comme patron (voir le guide, étape 4).'); return; }
+      startContent();
+    });
+  }
+  function startContent() {
     api('GET', 'content').then(function (j) { begin(j.content); }).catch(function (e) { if (e.status !== 401) toast(e.message, 'er'); });
   }
   document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 's' && C) { e.preventDefault(); save(); } });
 
-  fetch('/admin/api/session', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) {
-    mode = 'server'; mustChange = !!j.must_change;
-    if (j.auth) start(); else showLogin();
-  }).catch(function () {
-    // pas de serveur : mode « export » (hébergement statique ou fichier ouvert directement)
-    mode = 'static'; IMGPATH = '../assets/img/';
-    fetch('../content.json').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(begin).catch(function () {
-      $('#boot').textContent = 'Serveur introuvable. Lancez « python3 server.py » puis ouvrez http://127.0.0.1:8780/admin/';
-    });
-  });
+  if (!CONFIGURED) {
+    $('#boot').replaceChildren(h('div', { class: 'login-card' }, h('h1', { text: 'Tableau de bord non configuré' }),
+      h('p', { text: 'Renseignez SUPABASE_URL et SUPABASE_ANON_KEY dans le fichier site/config.js, puis publiez le site (voir GUIDE_CRM_SUPABASE.md, étape 5).' })));
+  } else if (!sb) {
+    $('#boot').textContent = 'Impossible de charger la bibliothèque Supabase. Vérifiez votre connexion Internet puis rechargez la page.';
+  } else {
+    sb.auth.getSession().then(function (r) {
+      mode = 'server'; mustChange = false;
+      if (r.data.session) { userEmail = r.data.session.user.email || ''; start(); } else showLogin();
+    }).catch(function () { $('#boot').textContent = 'Connexion à Supabase impossible. Vérifiez votre connexion Internet.'; });
+  }
 })();
