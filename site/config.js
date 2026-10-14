@@ -8,6 +8,6 @@
    « service_role » (secrète).
    ===================================================================== */
 window.WHOOPY_CONFIG = {
-  SUPABASE_URL: '',        // ex. 'https://abcdefghijklmno.supabase.co'
-  SUPABASE_ANON_KEY: ''    // ex. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....'
+  SUPABASE_URL: 'https://rvreusugrtiubqtafgbk.supabase.co',        // ex. 'https://abcdefghijklmno.supabase.co'
+  SUPABASE_ANON_KEY: 'sb_publishable_rTrEZB4mivU7kr9IwabvBQ_Q31CFt_1'    // ex. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....'
 };
