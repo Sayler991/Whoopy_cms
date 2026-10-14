@@ -69,6 +69,8 @@
       var fig = pic.parentElement, cap = fig && fig.querySelector('figcaption, .cap');
       if (cap && typeof p.caption === 'string') cap.textContent = p.caption;
     });
+    var ig = c.contact && c.contact.instagram_url;
+    if (/^https:\/\/(www\.)?instagram\.com\//.test(ig || '')) document.querySelectorAll('a.btn-ig').forEach(function (a) { a.href = ig; });
     document.documentElement.setAttribute('data-contenu', 'direct');
   }
 

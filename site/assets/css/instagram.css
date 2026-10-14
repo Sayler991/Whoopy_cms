@@ -1,0 +1,6 @@
+/* Bouton Instagram — même forme/animation que « Appeler » (.btn.btn-solid), seul le fond change */
+.btn.btn-ig{background:linear-gradient(45deg,#feda75 0%,#fa7e1e 25%,#d62976 50%,#962fbf 75%,#4f5bd5 100%);color:#fff;text-shadow:0 1px 2px #0006}
+.btn.btn-ig svg{filter:drop-shadow(0 1px 1px #0005)}
+.ig-pair{display:flex;flex-wrap:wrap;gap:.9rem}
+@media (max-width:420px){.dock .btn{padding-left:.5rem;padding-right:.5rem;gap:.35rem;font-size:.82rem}}
+@media (min-width:821px) and (max-width:1360px){.links>.btn-ig{width:44px;padding:0;justify-content:center;font-size:0;gap:0}}
