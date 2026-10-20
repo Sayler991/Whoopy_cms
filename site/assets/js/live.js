@@ -75,13 +75,18 @@
   }
 
   /* ---------- 2. formulaire de commande ---------- */
-  var MENU = [], phoneDisplay = '';
+  var MENU = [], phoneDisplay = '', phoneIntl = '';
+  (function () {   // valeur intégrée à la page (remplacée ensuite par le CMS)
+    var a = document.querySelector('a[href^="tel:"]');
+    if (a) { phoneIntl = a.getAttribute('href').slice(4); phoneDisplay = a.textContent.replace(/[^0-9+ ]/g, '').trim() || phoneDisplay; }
+  })();
   function setMenu(c) {
     MENU = [];
     var m = (c && c.menu) || {};
     (m.burgers || []).forEach(function (x) { MENU.push({ name: x.name, price: parseInt(x.price, 10) || 0, cat: 'Burgers' }); });
     (m.supplements || []).forEach(function (x) { MENU.push({ name: x.name, price: parseInt(x.price, 10) || 0, cat: 'Suppléments' }); });
     phoneDisplay = (c && c.contact && c.contact.phone_display) || phoneDisplay;
+    phoneIntl = (c && c.contact && c.contact.phone_intl) || phoneIntl;
     renderForm();
     if (!CONFIGURED) msg('Commande en ligne non configurée pour le moment' + (phoneDisplay ? ' : appelez le ' + phoneDisplay : '') + '.', 'warn');
   }
@@ -128,6 +133,20 @@
       return 'La commande n’a pas pu être envoyée (erreur ' + r.status + '). Réessayez ou appelez le restaurant' + (phoneDisplay ? ' au ' + phoneDisplay : '') + '.';
     });
   }
+  function showDone(name) {   // écran de confirmation après envoi réussi
+    var f = $('#cmd-form'), d = $('#cmd-done');
+    var tel = (phoneIntl || (phoneDisplay || '').replace(/[^0-9+]/g, '')).replace(/[^0-9+]/g, '');
+    if (!d) { d = document.createElement('div'); d.id = 'cmd-done'; d.className = 'cmd-done'; d.setAttribute('role', 'alert'); d.tabIndex = -1; f.parentNode.insertBefore(d, f.nextSibling); }
+    d.innerHTML = '<div class="cmd-done-ic" aria-hidden="true">🍔</div>' +
+      '<h3 class="cmd-done-t">Commande envoyée !</h3>' +
+      '<p class="cmd-done-p">Merci ' + esc(name) + ' ! <b>Appelez-nous pour la confirmer</b> : elle sera préparée dès votre appel.</p>' +
+      (tel ? '<a class="btn btn-solid cmd-call" href="tel:' + esc(tel) + '">📞 Appeler pour confirmer</a>' +
+        (phoneDisplay ? '<p class="cmd-done-num">' + esc(phoneDisplay) + '</p>' : '') : '') +
+      '<button type="button" class="btn btn-line cmd-again">Nouvelle commande</button>';
+    f.hidden = true; d.hidden = false;
+    d.querySelector('.cmd-again').addEventListener('click', function () { d.hidden = true; f.hidden = false; });
+    d.scrollIntoView({ behavior: 'smooth', block: 'center' }); try { d.focus({ preventScroll: true }); } catch (e) {}
+  }
   function initForm() {
     var f = $('#cmd-form'); if (!f) return;
     if (!CONFIGURED) {
@@ -161,7 +180,8 @@
       }).then(function (r) {
         if (!r.ok) return errText(r).then(function (t) { throw new Error(t); });
         f.reset(); $('#cmd-addr').hidden = true; updTotal();
-        msg('Merci ' + name + ' ! Votre commande a bien été transmise au restaurant.', 'ok');
+        msg('', '');
+        showDone(name);
       }).catch(function (er) {
         msg(er && er.message && !/Failed to fetch|NetworkError/.test(er.message) ? er.message : 'Connexion impossible. Vérifiez votre Internet ou appelez le restaurant' + (phoneDisplay ? ' au ' + phoneDisplay : '') + '.', 'er');
       }).then(function () { btn.disabled = false; });

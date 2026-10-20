@@ -23,3 +23,17 @@
 .cmd-msg.warn{background:#7a5a1255;border:1px solid #ffc22e}
 .cmd-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .commande .fine{color:var(--mut);font-size:.85rem;margin-top:.8rem}
+
+/* Écran « Commande envoyée » + bouton d'appel */
+.cmd-done{max-width:560px;margin:0 auto;text-align:center;background:#ffc22e;color:#1a0e00;border:4px solid #0d0a09;border-radius:28px;padding:1.8rem 1.2rem 1.4rem;box-shadow:8px 8px 0 #e0161e;outline:none;animation:cmdPop .45s cubic-bezier(.2,1.4,.4,1)}
+.cmd-done[hidden]{display:none}
+.cmd-done-ic{font-size:3.2rem;line-height:1}
+.cmd-done-t{font-family:var(--serif);font-size:clamp(1.9rem,7vw,2.6rem);margin:.4rem 0 .5rem;color:#e0161e;text-shadow:2px 2px 0 #0d0a09}
+.cmd-done-p{margin:0 0 1.2rem;font-size:1.05rem}
+.cmd-done .cmd-call{display:flex;justify-content:center;width:100%;font-size:1.25rem;min-height:68px;background:#e0161e;color:#fff;border:3px solid #0d0a09;box-shadow:0 6px 0 #0d0a09;letter-spacing:.02em;text-transform:none;animation:cmdPulse 1.6s ease-in-out infinite}
+.cmd-done .cmd-call:active{transform:translateY(4px);box-shadow:0 2px 0 #0d0a09}
+.cmd-done-num{font-family:var(--serif);font-size:1.4rem;margin:.7rem 0 .9rem}
+.cmd-done .cmd-again{color:#1a0e00;border-color:#0d0a09;background:transparent}
+@keyframes cmdPop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+@keyframes cmdPulse{50%{transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.cmd-done,.cmd-done .cmd-call{animation:none}}
