@@ -13,7 +13,7 @@ cut = src.index("os.makedirs(OUT,exist_ok=True)")
 src = src[:cut]
 src = src.replace("def pic(name,widths,sizes,alt,ratio,loading='lazy'):\n", "def pic(name,widths,sizes,alt,ratio,loading='lazy'):\n    PICCALLS.append((name,widths,sizes,alt,ratio))\n", 1)
 # 1) exécution fidèle pour récupérer les données
-sys.argv = ['x', 'http://127.0.0.1:8768']
+sys.argv = ['x', 'https://whoopy13.com']
 os.chdir(WORK); sys.path.insert(0, WORK)
 ns0 = {'__name__': 'x', '__file__': SRC, 'PICCALLS': []}
 exec(compile(src, 'build_orig', 'exec'), ns0)
@@ -36,7 +36,7 @@ def rep(key, old, new=None, kind='rich', count=1):
     return old
 
 # --- variables de tête
-rep(None, "URL=(sys.argv[1] if len(sys.argv)>1 else 'http://127.0.0.1:8768').rstrip('/')", "URL='@@url@@'")
+rep(None, "URL=(sys.argv[1] if len(sys.argv)>1 else 'https://whoopy13.com').rstrip('/')", "URL='@@url@@'")
 rep(None, "LAT,LON=34.8795084,-1.3257918", "LAT,LON='@@lat@@','@@lon@@'")
 s = re.sub(r"^DIR=f'.*$", "DIR='@@dir@@'", s, flags=re.M)
 s = re.sub(r"^GMAP='.*$", "GMAP='@@gmap@@'", s, flags=re.M)

@@ -411,19 +411,19 @@
  "IG": "https://www.instagram.com/whoopy13/",
  "TEL": "+213552103462",
  "TELD": "0552 10 34 62",
- "URL": "http://127.0.0.1:8768",
+ "URL": "https://whoopy13.com",
  "TITLE": "Whoopy Burger — Burgers & frites à Tlemcen (Bel Horizon)",
  "DESC": "Whoopy Burger à Tlemcen (Bel Horizon) : burgers de veau, de poulet pané, de poisson, frites croustillantes. 5/5 sur Google. Ouvert jusqu’à minuit. Appelez le 0552 10 34 62.",
  "ld": {
   "@context": "https://schema.org",
   "@type": "Restaurant",
-  "@id": "http://127.0.0.1:8768/#restaurant",
+  "@id": "https://whoopy13.com/#restaurant",
   "name": "Whoopy Burger",
-  "url": "http://127.0.0.1:8768/",
+  "url": "https://whoopy13.com/",
   "image": [
-   "http://127.0.0.1:8768/assets/og-image.jpg"
+   "https://whoopy13.com/assets/og-image.jpg"
   ],
-  "logo": "http://127.0.0.1:8768/assets/logo.svg",
+  "logo": "https://whoopy13.com/assets/logo.svg",
   "description": "Burgers savoureux, frites croustillantes et produits de qualité au cœur de Tlemcen. Le bonheur entre deux pains : frais, gourmand, irrésistible.",
   "servesCuisine": [
    "Burgers"
