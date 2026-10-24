@@ -37,3 +37,73 @@
 @keyframes cmdPop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
 @keyframes cmdPulse{50%{transform:scale(1.04)}}
 @media (prefers-reduced-motion:reduce){.cmd-done,.cmd-done .cmd-call{animation:none}}
+
+/* ===== Parcours de commande v2 : cartes tactiles, panier flottant, tiroir ===== */
+.commande .cmd-v2{display:block}
+.cmd-v2 .cmd-cat{margin:1.2rem 0 .6rem}
+.cmd-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem}
+@media (max-width:480px){.cmd-cards{grid-template-columns:repeat(2,1fr);gap:.55rem}}
+.cmd-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:.25rem;min-height:132px;padding:.8rem .5rem .7rem;border-radius:20px;border:2px solid var(--line);background:#ffffff08;color:var(--ink);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;transition:transform .2s var(--pop,ease),border-color .2s,background .2s,box-shadow .2s}
+.cmd-card:hover{border-color:#ffc22e;background:#ffc22e10}
+.cmd-card:active{transform:scale(.95)}
+.cmd-card:focus-visible{outline:3px solid #ffc22e;outline-offset:2px}
+.cmd-card.on{border-color:#ffc22e;background:#ffc22e1a;box-shadow:4px 4px 0 #e0161e}
+.cmd-cn{font-family:var(--serif);font-size:1.05rem;line-height:1.1;text-align:center}
+.cmd-cp{color:#ffc22e;font-size:.9rem}
+.cmd-badge{position:absolute;top:-8px;right:-6px;min-width:30px;height:30px;padding:0 .4rem;border-radius:999px;background:#e0161e;color:#fff;border:2px solid #0d0a09;font:700 .95rem/26px var(--sans);text-align:center;transform:scale(0);transition:transform .25s var(--pop,ease)}
+.cmd-card.on .cmd-badge{transform:scale(1)}
+.cmd-card.bump .cmd-badge{animation:cmdBadge .35s var(--pop,ease)}
+.cmd-card.bump{animation:cmdTap .3s ease}
+.cmd-fly{position:absolute;top:30%;left:50%;font:700 1.2rem var(--sans);color:#ffc22e;text-shadow:2px 2px 0 #0d0a09;pointer-events:none;animation:cmdFly .7s ease-out forwards}
+.cmd-hint{color:var(--mut);font-size:.85rem;margin:.9rem 0 0;text-align:center}
+.cmd-ic{display:block;width:64px;height:64px}
+.cmd-ic.sm{width:44px;height:44px;flex:none}
+.cmd-ic svg{width:100%;height:100%;overflow:visible}
+.cmd-ic .top,.cmd-ic .fx,.cmd-ic .ly{transform-box:fill-box;transform-origin:50% 100%}
+.cmd-card:hover .cmd-ic .top,.cmd-card.bump .cmd-ic .top{animation:icHop .5s var(--pop,ease)}
+.cmd-card:hover .cmd-ic .fx,.cmd-card.bump .cmd-ic .fx{animation:icWig .6s ease}
+.cmd-card.bump .cmd-ic .ly{animation:icSquish .4s ease}
+/* barre panier flottante */
+.cmd-bar{position:fixed;left:0;right:0;bottom:0;z-index:900;padding:.6rem .8rem calc(.6rem + env(safe-area-inset-bottom));pointer-events:none;animation:cmdUp .35s var(--pop,ease)}
+.cmd-bar[hidden]{display:none}
+.cmd-bar-btn{pointer-events:auto;display:flex;align-items:center;gap:.7rem;width:min(560px,100%);margin:0 auto;min-height:58px;padding:.5rem .6rem .5rem .6rem;border-radius:999px;border:3px solid #0d0a09;background:var(--gold,#ffc22e);color:#1a0e00;font:600 1rem var(--sans);box-shadow:0 6px 0 #0d0a09,0 12px 30px #0008;cursor:pointer}
+.cmd-bar.bump .cmd-bar-btn{animation:cmdTap .3s ease}
+.cmd-bar-n{min-width:40px;height:40px;border-radius:50%;background:#e0161e;color:#fff;display:grid;place-items:center;font-weight:700;border:2px solid #0d0a09}
+.cmd-bar-l{flex:1;text-align:left}
+.cmd-bar-t{font-family:var(--serif);font-size:1.2rem}
+.cmd-bar-go{background:#0d0a09;color:#ffc22e;border-radius:999px;padding:.55rem .9rem;font-size:.85rem;white-space:nowrap}
+@media (max-width:380px){.cmd-bar-go{display:none}}
+/* tiroir récapitulatif */
+.cmd-backdrop{position:fixed;inset:0;z-index:999;background:#000a;animation:cmdFade .25s}
+.cmd-backdrop[hidden]{display:none}
+.cmd-sheet{position:fixed;left:0;right:0;bottom:0;z-index:1000;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;background:#17110e;border-top:3px solid #ffc22e;border-radius:26px 26px 0 0;padding:0 1rem calc(1rem + env(safe-area-inset-bottom));transform:translateY(105%);visibility:hidden;transition:transform .38s var(--pop,ease),visibility 0s .38s}
+.cmd-sheet.open{transform:none;visibility:visible;transition:transform .38s var(--pop,ease)}
+@media (min-width:821px){.cmd-sheet{left:auto;top:0;width:440px;max-height:none;border-radius:26px 0 0 26px;border-top:0;border-left:3px solid #ffc22e;transform:translateX(105%)}}
+.cmd-sheet-h{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:1rem 0 .6rem;background:#17110e}
+.cmd-sheet-h h3{font-family:var(--serif);font-size:1.5rem;margin:0;color:#ffc22e}
+.cmd-grab{position:absolute;top:6px;left:50%;width:44px;height:5px;margin-left:-22px;border-radius:9px;background:#ffffff40}
+.cmd-close{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:1.1rem;cursor:pointer}
+.cmd-recap{list-style:none;margin:0 0 1rem;padding:0}
+.cmd-line{display:flex;align-items:center;gap:.6rem;padding:.55rem 0;border-bottom:1px dashed #ffc22e33;animation:cmdFade .25s}
+.cmd-ln{flex:1;min-width:0;display:grid}
+.cmd-ln b{font-family:var(--serif);font-weight:400;font-size:1.05rem}
+.cmd-ln small{color:var(--mut)}
+.cmd-v2 .cmd-q{gap:.2rem}
+.cmd-v2 .cmd-q button{width:44px;height:44px;font-size:1.3rem;touch-action:manipulation}
+.cmd-q output{min-width:1.6rem;text-align:center;font-weight:700}
+.cmd-del{width:44px;height:44px;border-radius:50%;border:0;background:#7a121655;color:#ffb3b3;cursor:pointer;flex:none}
+.cmd-empty{color:var(--mut);padding:.8rem 0}
+.cmd-sheet .cmd-client{background:transparent;border:0;padding:0}
+html.cmd-lock,html.cmd-lock body{overflow:hidden}
+.commande .cmd-v2 + .cmd-done{margin-top:0}
+@media (max-width:480px){.cmd-line .cmd-ic.sm{display:none}}
+@keyframes cmdTap{40%{transform:scale(.92)}75%{transform:scale(1.04)}}
+@keyframes cmdBadge{0%{transform:scale(.4)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes cmdFly{from{transform:translate(-50%,0);opacity:1}to{transform:translate(-50%,-46px);opacity:0}}
+@keyframes cmdUp{from{transform:translateY(100%)}}
+@keyframes cmdFade{from{opacity:0}}
+@keyframes icHop{40%{transform:translateY(-5px) rotate(-4deg)}70%{transform:translateY(1px)}}
+@keyframes icWig{25%{transform:rotate(12deg)}60%{transform:rotate(-10deg)}}
+@keyframes icSquish{40%{transform:scaleY(.8)}}
+@media (prefers-reduced-motion:reduce){.cmd-card,.cmd-card *,.cmd-bar,.cmd-bar *,.cmd-sheet,.cmd-line,.cmd-backdrop,.cmd-fly{animation:none!important;transition:none!important}.cmd-fly{display:none}}
+.commande .cmd-f[hidden]{display:none}

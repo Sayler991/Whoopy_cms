@@ -36,7 +36,7 @@
 <link rel="stylesheet" href="assets/css/style.min.css">
 <script>document.documentElement.className+=' js'</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","@id":"https://whoopy13.com/#restaurant","name":"Whoopy Burger","url":"https://whoopy13.com/","image":["https://whoopy13.com/assets/og-image.jpg"],"logo":"https://whoopy13.com/assets/logo.svg","description":"Burgers savoureux, frites croustillantes et produits de qualité au cœur de Tlemcen. Le bonheur entre deux pains : frais, gourmand, irrésistible.","servesCuisine":["Burgers"],"telephone":"+213552103462","sameAs":["https://www.instagram.com/whoopy13/"],"address":{"@type":"PostalAddress","streetAddress":"Bel Horizon","addressLocality":"Tlemcen","postalCode":"13000","addressCountry":"DZ"},"geo":{"@type":"GeoCoordinates","latitude":34.8795084,"longitude":-1.3257918},"hasMap":"https://www.google.com/maps/place/Whoopy+Burger/data=!4m2!3m1!1s0xd78c9006b9e6ab7:0x92dc5a51ca684292","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Saturday","Sunday"],"opens":"11:30","closes":"00:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"18:00","closes":"00:00"}],"aggregateRating":{"@type":"AggregateRating","ratingValue":"5.0","bestRating":"5","ratingCount":"35"}}</script>
-<link rel="stylesheet" href="assets/css/commande.css?v=2">
+<link rel="stylesheet" href="assets/css/commande.css?v=3">
 <link rel="stylesheet" href="assets/css/instagram.css?v=1">
 </head>
 <body>
@@ -163,10 +163,15 @@
 <section class="sec commande" id="commander" aria-labelledby="c-t">
  <div class="wrap">
   <div class="head"><div><p class="kicker">Commander</p><h2 id="c-t">Commandez <em>en ligne</em></h2></div>
-  <p class="lead">Choisissez vos burgers et suppléments, indiquez votre nom et votre téléphone : la commande est transmise directement au restaurant.</p></div>
-  <form class="cmd-grid" id="cmd-form" novalidate>
+  <p class="lead">Touchez vos burgers pour les ajouter (2 touches = 2), vérifiez le panier, indiquez votre nom et votre téléphone : la commande est transmise directement au restaurant.</p></div>
+  <form class="cmd-grid cmd-v2" id="cmd-form" novalidate>
    <fieldset class="cmd-box"><legend class="sr">Articles</legend><div id="cmd-items"><p class="cmd-msg">Chargement de la carte…</p></div></fieldset>
-   <fieldset class="cmd-box"><legend class="sr">Vos coordonnées</legend>
+   <div class="cmd-bar" id="cmd-bar" hidden><button type="button" class="cmd-bar-btn" id="cmd-bar-btn" aria-controls="cmd-sheet"><span class="cmd-bar-n" id="cmd-bar-n">0</span><span class="cmd-bar-l" id="cmd-bar-l">0 article</span><span class="cmd-bar-t" id="cmd-bar-t">0 DA</span><span class="cmd-bar-go">Voir le panier</span></button></div>
+   <div class="cmd-backdrop" id="cmd-backdrop" hidden></div>
+   <div class="cmd-sheet" id="cmd-sheet" role="dialog" aria-modal="true" aria-labelledby="cmd-sheet-t" aria-hidden="true">
+    <div class="cmd-sheet-h"><span class="cmd-grab" aria-hidden="true"></span><h3 id="cmd-sheet-t">Votre commande</h3><button type="button" class="cmd-close" aria-label="Fermer le panier">✕</button></div>
+    <ul class="cmd-recap" id="cmd-recap"></ul>
+   <fieldset class="cmd-box cmd-client"><legend class="sr">Vos coordonnées</legend>
     <label class="cmd-f"><span>Votre nom *</span><input name="cname" autocomplete="name" maxlength="80" required></label>
     <label class="cmd-f"><span>Téléphone *</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="05xx xx xx xx" required></label>
     <div class="cmd-radio" role="radiogroup" aria-label="Retrait ou livraison"><label><input type="radio" name="mode" value="emporter" checked> À emporter</label><label><input type="radio" name="mode" value="livraison"> Livraison</label></div>
@@ -178,6 +183,7 @@
     <p class="cmd-msg" id="cmd-msg" role="status" hidden></p>
     <p class="fine">Les prix sont ceux de la carte en ligne ; le total définitif est recalculé automatiquement à la réception de la commande.</p>
    </fieldset>
+   </div>
   </form>
  </div>
 </section>
@@ -225,5 +231,5 @@ if(document.readyState==='complete')setTimeout(go,200);else addEventListener('lo
 </script>
 <script src="config.js"></script>
 <script src="assets/js/app.min.js" defer></script>
-<script src="assets/js/live.js?v=3" defer></script>
+<script src="assets/js/live.js?v=4" defer></script>
 </body></html>
