@@ -30,7 +30,7 @@
 .cmd-done-ic{font-size:3.2rem;line-height:1}
 .cmd-done-t{font-family:var(--serif);font-size:clamp(1.9rem,7vw,2.6rem);margin:.4rem 0 .5rem;color:#e0161e;text-shadow:2px 2px 0 #0d0a09}
 .cmd-done-p{margin:0 0 1.2rem;font-size:1.05rem}
-.cmd-done .cmd-call{display:flex;justify-content:center;width:100%;font-size:1.25rem;min-height:68px;background:#e0161e;color:#fff;border:3px solid #0d0a09;box-shadow:0 6px 0 #0d0a09;letter-spacing:.02em;text-transform:none;animation:cmdPulse 1.6s ease-in-out infinite}
+.cmd-done .cmd-call{display:flex;justify-content:center;width:100%;font-size:1.25rem;min-height:68px;background:#16a34a;color:#fff;border:3px solid #0d0a09;box-shadow:0 6px 0 #0d0a09;letter-spacing:.02em;text-transform:none;animation:cmdPulse 1.6s ease-in-out infinite}
 .cmd-done .cmd-call:active{transform:translateY(4px);box-shadow:0 2px 0 #0d0a09}
 .cmd-done-num{font-family:var(--serif);font-size:1.4rem;margin:.7rem 0 .9rem}
 .cmd-done .cmd-again{color:#1a0e00;border-color:#0d0a09;background:transparent}
